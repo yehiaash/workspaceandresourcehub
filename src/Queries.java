@@ -283,6 +283,69 @@ public class Queries {
     }
 
     // ============================================================
+    // SELECT ALL MEMBERS
+    // ============================================================
+    public static void selectAllMembers(Connection conn) throws SQLException {
+        System.out.println("\n--- All Members ---");
+        String sql = """
+                SELECT MEMBER_ID, FULLNAME, EMAIL, PHONE, AFFILIATION, REGISTRATIONDATE
+                FROM MEMBER
+                ORDER BY MEMBER_ID
+                """;
+        Statement st = conn.createStatement();
+        ResultSet rs = st.executeQuery(sql);
+
+        System.out.printf("%-8s %-20s %-25s %-15s %-25s %-15s%n",
+                "ID", "Full Name", "Email", "Phone", "Affiliation", "Registered");
+        System.out.println("-".repeat(110));
+
+        boolean found = false;
+        while (rs.next()) {
+            System.out.printf("%-8s %-20s %-25s %-15s %-25s %-15s%n",
+                    String.valueOf(rs.getInt(1)),
+                    rs.getString(2),
+                    rs.getString(3),
+                    rs.getString(4),
+                    rs.getString(5),
+                    String.valueOf(rs.getDate(6)));
+            found = true;
+        }
+        if (!found) System.out.println("No members found.");
+        st.close();
+    }
+
+    // ============================================================
+    // SELECT ALL EQUIPMENT
+    // ============================================================
+    public static void selectAllEquipment(Connection conn) throws SQLException {
+        System.out.println("\n--- All Equipment ---");
+        String sql = """
+                SELECT EQUIPMENTID, EQUIPMENTNAME, EQUIPMENTTYPE, USAGERATE, AVAILABILITYSTATUS
+                FROM EQUIPMENT
+                ORDER BY EQUIPMENTID
+                """;
+        Statement st = conn.createStatement();
+        ResultSet rs = st.executeQuery(sql);
+
+        System.out.printf("%-8s %-22s %-18s %-12s %-15s%n",
+                "ID", "Equipment Name", "Type", "Usage Rate", "Status");
+        System.out.println("-".repeat(80));
+
+        boolean found = false;
+        while (rs.next()) {
+            System.out.printf("%-8s %-22s %-18s %-12s %-15s%n",
+                    String.valueOf(rs.getInt(1)),
+                    rs.getString(2),
+                    rs.getString(3),
+                    String.valueOf(rs.getDouble(4)),
+                    rs.getString(5));
+            found = true;
+        }
+        if (!found) System.out.println("No equipment found.");
+        st.close();
+    }
+
+    // ============================================================
     // INQUIRY 1 — Most popular workspace TYPE
     // ============================================================
     public static void inquiry1(Connection conn) throws SQLException {

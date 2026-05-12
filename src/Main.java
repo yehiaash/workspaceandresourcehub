@@ -44,8 +44,8 @@ public class Main {
                     case "4" -> Queries.deleteReservation(conn);
                     case "5" -> Queries.updateMember(conn);
                     case "6" -> Queries.updateReservation(conn);
-                    // case "7" -> Queries.selectAllMembers(conn);
-                    // case "8" -> Queries.selectAllEquipment(conn);
+                    case "7" -> Queries.selectAllMembers(conn);
+                    case "8" -> Queries.selectAllEquipment(conn);
                     case "9" -> Queries.selectReservationsJoin(conn);
                     case "10" -> Queries.selectLogJoin(conn);
                     case "11" -> Queries.inquiry1(conn);
