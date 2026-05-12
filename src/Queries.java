@@ -4,6 +4,43 @@ import java.util.Scanner;
 public class Queries {
 
     static Scanner sc = new Scanner(System.in);
+    public static void insertMember(Connection conn) throws SQLException{
+        System.out.println("Please enter member's data (id,name,email,phone,affiliation): ");
+        int id=sc.nextInt();
+        sc.nextLine();
+        String name=sc.nextLine();
+        String email=sc.nextLine();
+        String phone=sc.nextLine();
+        String affiliation=sc.nextLine();
+        String sql="insert into member values(?,?,?,?,?,getdate())";
+        PreparedStatement statement=conn.prepareStatement(sql);
+        statement.setInt(1,id);
+        statement.setString(2,name);
+        statement.setString(3,email);
+        statement.setString(4,phone);
+        statement.setString(5,affiliation);
+        statement.executeUpdate();
+        
+    }
+
+    public static void insertReservation(Connection conn) throws SQLException{
+        System.out.println("Please enter reservation's data (reservationid,workspaceid,memberid,starttime,endtime): ");
+        int reservationid=sc.nextInt();
+        int workspaceid=sc.nextInt();
+        int memberid=sc.nextInt();
+        sc.nextLine();
+        String starttime=sc.nextLine();
+        String endtime=sc.nextLine();
+        String sql="insert into reservation values(?,?,?,'reserved',getdate(),?,?)";
+        PreparedStatement statement=conn.prepareStatement(sql);
+        statement.setInt(1,reservationid);
+        statement.setInt(2,workspaceid);
+        statement.setInt(3,memberid);
+        statement.setString(4,starttime);
+        statement.setString(5,endtime);
+        statement.executeUpdate();
+        
+    }
 
     // ============================================================
     // JOIN 1 — Reservation with Member + Workspace + Hub

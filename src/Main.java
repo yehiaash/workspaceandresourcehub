@@ -38,8 +38,8 @@ public class Main {
 
                 String choice = sc.nextLine();
                 switch (choice) {
-                    // case "1"  -> Queries.insertMember(conn);
-                    // case "2"  -> Queries.insertReservation(conn);
+                    case "1"  -> Queries.insertMember(conn);
+                    case "2"  -> Queries.insertReservation(conn);
                     // case "3"  -> Queries.deleteMember(conn);
                     // case "4"  -> Queries.deleteReservation(conn);
                     // case "5"  -> Queries.updateMember(conn);
@@ -59,6 +59,7 @@ public class Main {
                 }
             }
             conn.close();
+            sc.close();
             System.out.println("Goodbye!");
         } catch (Exception e) {
             System.out.println("Connection Error: " + e.getMessage());
