@@ -38,24 +38,24 @@ public class Main {
 
                 String choice = sc.nextLine();
                 switch (choice) {
-                    case "1"  -> Queries.insertMember(conn);
-                    case "2"  -> Queries.insertReservation(conn);
-                    // case "3"  -> Queries.deleteMember(conn);
-                    // case "4"  -> Queries.deleteReservation(conn);
-                    // case "5"  -> Queries.updateMember(conn);
-                    // case "6"  -> Queries.updateReservation(conn);       
-                    // case "7"  -> Queries.selectAllMembers(conn);
-                    // case "8"  -> Queries.selectAllEquipment(conn);     
-                    case "9"  -> Queries.selectReservationsJoin(conn);   
-                    case "10" -> Queries.selectLogJoin(conn);            
+                    case "1" -> Queries.insertMember(conn);
+                    case "2" -> Queries.insertReservation(conn);
+                    // case "3" -> Queries.deleteMember(conn);
+                    // case "4" -> Queries.deleteReservation(conn);
+                    // case "5" -> Queries.updateMember(conn);
+                    // case "6" -> Queries.updateReservation(conn);
+                    // case "7" -> Queries.selectAllMembers(conn);
+                    // case "8" -> Queries.selectAllEquipment(conn);
+                    case "9" -> Queries.selectReservationsJoin(conn);
+                    case "10" -> Queries.selectLogJoin(conn);
                     case "11" -> Queries.inquiry1(conn);
                     case "12" -> Queries.inquiry2(conn);
-                    // case "13" -> Queries.inquiry3(conn);
-                    // case "14" -> Queries.inquiry4(conn);
-                    // case "15" -> Queries.inquiry5(conn);
+                    case "13" -> Queries.inquiry3(conn);
+                    case "14" -> Queries.inquiry4(conn);
+                    case "15" -> Queries.inquiry5(conn);
                     // case "16" -> Queries.inquiry6(conn);
-                    case "0"  -> running = false;
-                    default   -> System.out.println("Invalid choice, try again.");
+                    case "0" -> running = false;
+                    default -> System.out.println("Invalid choice, try again.");
                 }
             }
             conn.close();
