@@ -40,10 +40,10 @@ public class Main {
                 switch (choice) {
                     case "1" -> Queries.insertMember(conn);
                     case "2" -> Queries.insertReservation(conn);
-                     case "3" -> Queries.deleteMember(conn);
-                     case "4" -> Queries.deleteReservation(conn);
-                    // case "5" -> Queries.updateMember(conn);
-                    // case "6" -> Queries.updateReservation(conn);
+                    case "3" -> Queries.deleteMember(conn);
+                    case "4" -> Queries.deleteReservation(conn);
+                    case "5" -> Queries.updateMember(conn);
+                    case "6" -> Queries.updateReservation(conn);
                     // case "7" -> Queries.selectAllMembers(conn);
                     // case "8" -> Queries.selectAllEquipment(conn);
                     case "9" -> Queries.selectReservationsJoin(conn);

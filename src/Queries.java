@@ -153,6 +153,50 @@ public class Queries {
         }
 
     }
+    public static void updateMember(Connection conn) throws SQLException {
+        System.out.println("Please enter member id: ");
+        int id=sc.nextInt();
+        sc.nextLine();
+        System.out.println("Please enter data you wish to update(email,phone,affiliation): ");
+        String email=sc.nextLine();
+        String phone=sc.nextLine();
+        String affiliation=sc.nextLine();
+        String sql="update member set email=?, phone=?, affiliation=? where member_id=?";
+        PreparedStatement statement= conn.prepareStatement(sql);
+        statement.setString(1,email);
+        statement.setString(2,phone);
+        statement.setString(3,affiliation);
+        statement.setInt(4,id);
+        int rows=statement.executeUpdate();
+        if(rows==0){
+            System.out.println("Member id not found");
+        }
+        else{
+            System.out.println("Data updated successfully");
+        }
+
+    }
+    public static void updateReservation(Connection conn) throws SQLException {
+        System.out.println("Please enter reservation id: ");
+        int id=sc.nextInt();
+        sc.nextLine();
+        System.out.println("Please enter data you wish to update(start time,end time): ");
+        String stime=sc.nextLine();
+        String etime=sc.nextLine();
+        String sql="update reservation set starttime=?, endtime=? where reservation_id=?";
+        PreparedStatement statement= conn.prepareStatement(sql);
+        statement.setString(1,stime);
+        statement.setString(2,etime);
+        statement.setInt(3,id);
+        int rows=statement.executeUpdate();
+        if(rows==0){
+            System.out.println("Reservation id not found");
+        }
+        else{
+            System.out.println("Data updated successfully");
+        }
+
+    }
 
     // ============================================================
     // JOIN 1 — Reservation with Member + Workspace + Hub
