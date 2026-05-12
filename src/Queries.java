@@ -1,3 +1,4 @@
+
 import java.sql.*;
 import java.util.Scanner;
 
@@ -5,53 +6,108 @@ public class Queries {
 
     static Scanner sc = new Scanner(System.in);
 
+    // ============================================================
+    // INSERT MEMBER — Dynamic ID (Manual MAX+1, no schema change)
+    // ============================================================
     public static void insertMember(Connection conn) throws SQLException {
-        System.out.println("Please enter member's data (id,name,email,phone,affiliation): ");
-        int id = sc.nextInt();
-        sc.nextLine();
-        String name = sc.nextLine();
-        String email = sc.nextLine();
-        String phone = sc.nextLine();
-        String affiliation = sc.nextLine();
-        String sql = "insert into member values(?,?,?,?,?,getdate())";
-        PreparedStatement statement = conn.prepareStatement(sql);
-        statement.setInt(1, id);
-        statement.setString(2, name);
-        statement.setString(3, email);
-        statement.setString(4, phone);
-        statement.setString(5, affiliation);
-        statement.executeUpdate();
+        System.out.println("\n--- Insert New Member ---");
 
+        System.out.print("Full Name: ");
+        String name = sc.nextLine();
+
+        System.out.print("Email: ");
+        String email = sc.nextLine();
+
+        System.out.print("Phone: ");
+        String phone = sc.nextLine();
+
+        System.out.print("Affiliation: ");
+        String affiliation = sc.nextLine();
+
+        // Fetch the current max MEMBER_ID and add 1
+        int newId = 1;
+        String maxSql = "SELECT MAX(MEMBER_ID) FROM MEMBER";
+        try (Statement st = conn.createStatement(); ResultSet rs = st.executeQuery(maxSql)) {
+            if (rs.next() && rs.getObject(1) != null) {
+                newId = rs.getInt(1) + 1;
+            }
+        }
+
+        String sql = """
+            INSERT INTO MEMBER (MEMBER_ID, FULLNAME, EMAIL, PHONE, AFFILIATION, REGISTRATIONDATE)
+            VALUES (?, ?, ?, ?, ?, GETDATE())
+            """;
+
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.setInt(1, newId);
+            statement.setString(2, name);
+            statement.setString(3, email);
+            statement.setString(4, phone);
+            statement.setString(5, affiliation);
+
+            statement.executeUpdate();
+            System.out.println("✔ Member inserted successfully! Generated Member ID: " + newId);
+        } catch (SQLException e) {
+            System.out.println("Error inserting member: " + e.getMessage());
+        }
     }
+    // ============================================================
+    // INSERT RESERVATION — Dynamic ID (Manual MAX+1, no schema change)
+    // ============================================================
 
     public static void insertReservation(Connection conn) throws SQLException {
-        System.out.println("Please enter reservation's data (reservationid,workspaceid,memberid,starttime,endtime): ");
-        int reservationid = sc.nextInt();
-        int workspaceid = sc.nextInt();
-        int memberid = sc.nextInt();
-        sc.nextLine();
-        String starttime = sc.nextLine();
-        String endtime = sc.nextLine();
-        String sql = "insert into reservation values(?,?,?,'reserved',getdate(),?,?)";
-        PreparedStatement statement = conn.prepareStatement(sql);
-        statement.setInt(1, reservationid);
-        statement.setInt(2, workspaceid);
-        statement.setInt(3, memberid);
-        statement.setString(4, starttime);
-        statement.setString(5, endtime);
-        statement.executeUpdate();
+        System.out.println("\n--- Insert New Reservation ---");
 
+        System.out.print("Workspace ID: ");
+        int workspaceId = sc.nextInt();
+
+        System.out.print("Member ID: ");
+        int memberId = sc.nextInt();
+
+        sc.nextLine(); // Consume the leftover newline
+
+        System.out.print("Start Time: ");
+        String startTime = sc.nextLine();
+
+        System.out.print("End Time: ");
+        String endTime = sc.nextLine();
+
+        // Fetch the current max RESERVATION_ID and add 1
+        int newId = 1;
+        String maxSql = "SELECT MAX(RESERVATION_ID) FROM RESERVATION";
+        try (Statement st = conn.createStatement(); ResultSet rs = st.executeQuery(maxSql)) {
+            if (rs.next() && rs.getObject(1) != null) {
+                newId = rs.getInt(1) + 1;
+            }
+        }
+
+        String sql = """
+            INSERT INTO RESERVATION (RESERVATION_ID, WORKSPACE_ID, MEMBER_ID, STATUS, RESERVATIONDATE, STARTTIME, ENDTIME)
+            VALUES (?, ?, ?, 'reserved', GETDATE(), ?, ?)
+            """;
+
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.setInt(1, newId);
+            statement.setInt(2, workspaceId);
+            statement.setInt(3, memberId);
+            statement.setString(4, startTime);
+            statement.setString(5, endTime);
+
+            statement.executeUpdate();
+            System.out.println("✔ Reservation inserted successfully! Generated Reservation ID: " + newId);
+        } catch (SQLException e) {
+            System.out.println("Error inserting reservation: " + e.getMessage());
+        }
     }
 
-
-    public static void deleteReservation(Connection conn) throws SQLException{
+    public static void deleteReservation(Connection conn) throws SQLException {
         System.out.println("Enter reservation ID to delete: ");
         int reservationid = sc.nextInt();
         sc.nextLine();
 
         String checksql = "Select count(*) from RESERVATION where RESERVATION_ID = ?";
         PreparedStatement checkstmt = conn.prepareStatement(checksql);
-        checkstmt.setInt(1 , reservationid);
+        checkstmt.setInt(1, reservationid);
 
         ResultSet rs = checkstmt.executeQuery();
         rs.next();
@@ -61,24 +117,23 @@ public class Queries {
             return;
         }
 
-
-            String sql = "Delete from RESERVATION where RESERVATION_ID = ?";
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setInt(1 , reservationid);
-         int rowsDeleted =   stmt.executeUpdate();
-         if (rowsDeleted > 0){
-             System.out.println("Reservation deleted successfully!");
-         }
+        String sql = "Delete from RESERVATION where RESERVATION_ID = ?";
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.setInt(1, reservationid);
+        int rowsDeleted = stmt.executeUpdate();
+        if (rowsDeleted > 0) {
+            System.out.println("Reservation deleted successfully!");
+        }
     }
 
-    public static void deleteMember(Connection conn) throws SQLException{
+    public static void deleteMember(Connection conn) throws SQLException {
         System.out.println("Enter member ID to delete: ");
         int id = sc.nextInt();
         sc.nextLine();
 
         String checksql = "Select count(*) from member where MEMBER_ID = ?";
         PreparedStatement checkstmt = conn.prepareStatement(checksql);
-        checkstmt.setInt(1 , id);
+        checkstmt.setInt(1, id);
 
         ResultSet rs = checkstmt.executeQuery();
         rs.next();
@@ -90,11 +145,10 @@ public class Queries {
         try {
             String sql = "Delete from member where member_id = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setInt(1 , id);
+            stmt.setInt(1, id);
             stmt.executeUpdate();
             System.out.println("Member deleted successfully!");
-        }
-        catch (SQLException e){
+        } catch (SQLException e) {
             System.out.println("Cannot delete member: They have existing reservation.");
         }
 
@@ -198,11 +252,12 @@ public class Queries {
                 """;
         Statement st = conn.createStatement();
         ResultSet rs = st.executeQuery(sql);
-        if (rs.next())
+        if (rs.next()) {
             System.out.printf("Workspace Type: %-20s | Total Reservations: %s%n",
                     rs.getString(1), String.valueOf(rs.getInt(2)));
-        else
+        } else {
             System.out.println("No data found.");
+        }
     }
 
     // ============================================================
@@ -231,15 +286,16 @@ public class Queries {
                     rs.getString(3));
             found = true;
         }
-        if (!found)
+        if (!found) {
             System.out.println("All hubs had reservations last month.");
+        }
     }
 
     // ============================================================
-    // INQUIRY 3 — Member with Most Equipment usage
+    // INQUIRY 3 — Member with Most Equipment usage (LAST MONTH ONLY)
     // ============================================================
     public static void inquiry3(Connection conn) throws SQLException {
-        System.out.println("\n[Inquiry 3] Member with the most equipment usage:");
+        System.out.println("\n[Inquiry 3] Member with the most equipment usage (Last Month):");
         String sql = """
                 SELECT TOP 1
                     m.MEMBER_ID,
@@ -248,25 +304,29 @@ public class Queries {
                 FROM MEMBER m
                 JOIN RESERVATION r ON m.MEMBER_ID = r.MEMBER_ID
                 JOIN LOG l ON r.RESERVATION_ID = l.RESERVATION_ID
+                WHERE MONTH(r.RESERVATIONDATE) = MONTH(DATEADD(MONTH, -1, GETDATE()))
+                  AND YEAR(r.RESERVATIONDATE)  = YEAR(DATEADD(MONTH, -1, GETDATE()))
                 GROUP BY m.MEMBER_ID, m.FULLNAME
                 ORDER BY EquipmentCount DESC
                 """;
         Statement st = conn.createStatement();
         ResultSet rs = st.executeQuery(sql);
-        if (rs.next())
+        if (rs.next()) {
             System.out.printf("Member ID: %-6s | Name: %-20s | Equipment Used: %s%n",
                     String.valueOf(rs.getInt(1)),
                     rs.getString(2),
                     String.valueOf(rs.getInt(3)));
-        else
-            System.out.println("No equipment usage data found.");
+        } else {
+            System.out.println("No equipment usage data found for last month.");
+        }
+        st.close();
     }
 
     // ============================================================
-    // INQUIRY 4 — Members with NO reservations
+    // INQUIRY 4 — Members with NO reservations (LAST MONTH ONLY)
     // ============================================================
     public static void inquiry4(Connection conn) throws SQLException {
-        System.out.println("\n[Inquiry 4] Members with no reservations:");
+        System.out.println("\n[Inquiry 4] Members with no reservations (Last Month):");
         String sql = """
                 SELECT m.MEMBER_ID, m.FULLNAME, m.EMAIL, m.PHONE
                 FROM MEMBER m
@@ -274,6 +334,8 @@ public class Queries {
                     SELECT DISTINCT r.MEMBER_ID
                     FROM RESERVATION r
                     WHERE r.MEMBER_ID IS NOT NULL
+                      AND MONTH(r.RESERVATIONDATE) = MONTH(DATEADD(MONTH, -1, GETDATE()))
+                      AND YEAR(r.RESERVATIONDATE)  = YEAR(DATEADD(MONTH, -1, GETDATE()))
                 )
                 ORDER BY m.MEMBER_ID
                 """;
@@ -288,26 +350,34 @@ public class Queries {
                     rs.getString(4));
             found = true;
         }
-        if (!found)
-            System.out.println("All members have made at least one reservation.");
+        if (!found) {
+            System.out.println("All members made at least one reservation last month.");
+        }
+        st.close();
     }
 
     // ============================================================
-    // INQUIRY 5 — Equipment Count Per Hub
+    // INQUIRY 5 — Equipment Count Per Hub (LAST MONTH ONLY)
     // ============================================================
     public static void inquiry5(Connection conn) throws SQLException {
-        System.out.println("\n[Inquiry 5] Equipment count per urban hub:");
+        System.out.println("\n[Inquiry 5] Equipment count per urban hub (Last Month):");
         String sql = """
                 SELECT
-                    h.HUB_ID,
-                    h.HUB_NAME,
-                    h.DISTRICT,
-                    COUNT(e.EQUIPMENTID) AS EquipmentCount
-                FROM URBAN_HUB h
-                LEFT JOIN WORKSPACE w ON h.HUB_ID = w.HUB_ID
-                LEFT JOIN EQUIPMENT e ON w.WORKSPACE_ID = e.WORKSPACE_ID
-                GROUP BY h.HUB_ID, h.HUB_NAME, h.DISTRICT
-                ORDER BY EquipmentCount DESC
+                h.HUB_NAME,
+                h.DISTRICT,
+                e.EQUIPMENTID,
+                e.EQUIPMENTNAME,
+                e.EQUIPMENTTYPE,
+                SUM(l.DURATION) AS TotalDuration
+            FROM LOG l
+            JOIN RESERVATION r ON l.RESERVATION_ID = r.RESERVATION_ID
+            JOIN WORKSPACE   w ON r.WORKSPACE_ID   = w.WORKSPACE_ID
+            JOIN URBAN_HUB   h ON w.HUB_ID         = h.HUB_ID
+            JOIN EQUIPMENT   e ON l.EQUIPMENTID    = e.EQUIPMENTID
+            WHERE MONTH(r.RESERVATIONDATE) = MONTH(DATEADD(MONTH,-1,GETDATE()))
+              AND YEAR(r.RESERVATIONDATE)  = YEAR(DATEADD(MONTH,-1,GETDATE()))
+            GROUP BY h.HUB_NAME, h.DISTRICT, e.EQUIPMENTID, e.EQUIPMENTNAME, e.EQUIPMENTTYPE
+            ORDER BY h.HUB_NAME, e.EQUIPMENTNAME
                 """;
         Statement st = conn.createStatement();
         ResultSet rs = st.executeQuery(sql);
@@ -320,8 +390,9 @@ public class Queries {
                     String.valueOf(rs.getInt(4)));
             found = true;
         }
-        if (!found)
-            System.out.println("No hub data found.");
+        if (!found) {
+            System.out.println("No hub data found for last month.");
+        }
+        st.close();
     }
-
 }
