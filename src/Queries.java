@@ -395,4 +395,45 @@ public class Queries {
         }
         st.close();
     }
+    // ===============================================================
+    // INQUIRY 6 — Each Member's Full Profile + Total Hours Reserved
+    // ===============================================================
+
+    public static void inquiry6(Connection conn) throws SQLException {
+        System.out.println("\n[Inquiry 6] Each member's full profile and total hours reserved:");
+        String sql = """
+            SELECT
+                m.MEMBER_ID,
+                m.FULLNAME,
+                m.EMAIL,
+                m.PHONE,
+                m.AFFILIATION,
+                m.REGISTRATIONDATE,
+                COALESCE(SUM(DATEDIFF(HOUR, r.STARTTIME, r.ENDTIME)), 0) AS TotalHoursReserved
+            FROM MEMBER m
+            LEFT JOIN RESERVATION r ON m.MEMBER_ID = r.MEMBER_ID
+            GROUP BY m.MEMBER_ID, m.FULLNAME, m.EMAIL, m.PHONE, m.AFFILIATION, m.REGISTRATIONDATE
+            ORDER BY TotalHoursReserved DESC
+            """;
+        Statement st = conn.createStatement();
+        ResultSet rs = st.executeQuery(sql);
+        boolean found = false;
+        while (rs.next()) {
+            System.out.printf(
+                    "ID: %-5s | Name: %-20s | Email: %-25s | Phone: %-15s | Affiliation: %-20s | Registered: %-12s | Total Hours: %s%n",
+                    String.valueOf(rs.getInt(1)),
+                    rs.getString(2),
+                    rs.getString(3),
+                    rs.getString(4),
+                    rs.getString(5),
+                    String.valueOf(rs.getDate(6)),
+                    String.valueOf(rs.getInt(7))
+            );
+            found = true;
+        }
+        if (!found) {
+            System.out.println("No member data found.");
+        }
+        st.close();
+    }
 }

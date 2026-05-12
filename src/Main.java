@@ -53,7 +53,7 @@ public class Main {
                     case "13" -> Queries.inquiry3(conn);
                     case "14" -> Queries.inquiry4(conn);
                     case "15" -> Queries.inquiry5(conn);
-                    // case "16" -> Queries.inquiry6(conn);
+                    case "16" -> Queries.inquiry6(conn);
                     case "0" -> running = false;
                     default -> System.out.println("Invalid choice, try again.");
                 }
