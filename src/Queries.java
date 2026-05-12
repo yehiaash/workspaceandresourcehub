@@ -43,6 +43,63 @@ public class Queries {
 
     }
 
+
+    public static void deleteReservation(Connection conn) throws SQLException{
+        System.out.println("Enter reservation ID to delete: ");
+        int reservationid = sc.nextInt();
+        sc.nextLine();
+
+        String checksql = "Select count(*) from RESERVATION where RESERVATION_ID = ?";
+        PreparedStatement checkstmt = conn.prepareStatement(checksql);
+        checkstmt.setInt(1 , reservationid);
+
+        ResultSet rs = checkstmt.executeQuery();
+        rs.next();
+
+        if (rs.getInt(1) == 0) {
+            System.out.println("Reservation with ID " + reservationid + " not found!");
+            return;
+        }
+
+
+            String sql = "Delete from RESERVATION where RESERVATION_ID = ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1 , reservationid);
+         int rowsDeleted =   stmt.executeUpdate();
+         if (rowsDeleted > 0){
+             System.out.println("Reservation deleted successfully!");
+         }
+    }
+
+    public static void deleteMember(Connection conn) throws SQLException{
+        System.out.println("Enter member ID to delete: ");
+        int id = sc.nextInt();
+        sc.nextLine();
+
+        String checksql = "Select count(*) from member where MEMBER_ID = ?";
+        PreparedStatement checkstmt = conn.prepareStatement(checksql);
+        checkstmt.setInt(1 , id);
+
+        ResultSet rs = checkstmt.executeQuery();
+        rs.next();
+        if (rs.getInt(1) == 0) {
+            System.out.println("Member with ID " + id + " not found!");
+            return;
+        }
+
+        try {
+            String sql = "Delete from member where member_id = ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1 , id);
+            stmt.executeUpdate();
+            System.out.println("Member deleted successfully!");
+        }
+        catch (SQLException e){
+            System.out.println("Cannot delete member: They have existing reservation.");
+        }
+
+    }
+
     // ============================================================
     // JOIN 1 — Reservation with Member + Workspace + Hub
     // ============================================================
